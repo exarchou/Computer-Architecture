@@ -3,10 +3,10 @@
 int main()
 {
 
-	int i = 0, sum = 0;
-	float average = 0.0;
+	unsigned long long factorial = 1;
+	int i = 1;
 	
-	for (i = 1; i <= 10000; i++)
+	for (i = 1; i <= 20; i++)
 	{
 		factorial = factorial * i;
 	}
