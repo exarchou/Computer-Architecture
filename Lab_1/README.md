@@ -14,6 +14,8 @@ The file *starter_se.py* is using some default variables, as the parameters of t
 - *--mem-ranks* : this argument declares the number of memory ranks per channel.
 - *--mem-size* : this argument declares the physical memory size (default="2GB").
 
+Moreover we can obtain some information about caches. It is observable that there are two levels of caches, L1 (private) and L2 (shared) respectively. Each line of cache has a size of 64 bytes.
+
 
 
 ### 2. System information by config.ini and config.json
@@ -45,17 +47,17 @@ Except for the output file *stats.txt*, which is produced after the simulation, 
 
 ##### 2b. Committed Instructions
 
-The number of total committed instructions based on *stats.txt* is **5834**, as can be found at line 77 *system.cpu_cluster.cpus.op_class_0::total*.
-
-
+The number of total committed instructions based on *stats.txt* is **5028**, as can be found at line 14 *system.cpu_cluster.cpus.committedInsts*.
 
 **[config.ini results]**
+
+
 
 ---
 
 ##### 2c. L2 cache
 
-**[inside stats.txt]**
+The total number of accesses in L2 cache is **469**, as can be seen at line 523 *system.cpu_cluster.l2.overall_accesses::total* 
 
 ---
 
