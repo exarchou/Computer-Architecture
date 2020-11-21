@@ -39,9 +39,9 @@ Except for the output file *stats.txt*, which is produced after the simulation, 
 - *[system.cpu_cluster.cpus], line 65* :  the variable type =MinorCPU indicates the architecture of the CPU. The reason this variable has not its default value (AtomicSimpleCPU) is the argument --cpu="minor".
 - *[system.mem_ctrls0.dram], line 1427* : the variable ranks_per_channel=2 indicates that there are 2 memory ranks in each channel. Consequently, the memory ranks for each channels are accessed through the names *system.mem_ctrls0* and *system.mem_ctrls1*, which can be found at line 13, under [system]. The same value of ranks_per_channel can be be obviously found at [system.mem_ctrls1.dram], line 1557.
 
-
-
 **[TYPE OF MEMORY]**
+
+
 
 ---
 
@@ -57,7 +57,7 @@ The number of total committed instructions based on *stats.txt* is **5028**, as 
 
 ##### 2c. L2 cache
 
-The total number of accesses in L2 cache is **469**, as can be seen at line 523 *system.cpu_cluster.l2.overall_accesses::total* 
+The total number of accesses in L2 cache is **469**, as can be seen at line 523  under *system.cpu_cluster.l2.overall_accesses::total* 
 
 ---
 
@@ -68,13 +68,44 @@ The total number of accesses in L2 cache is **469**, as can be seen at line 523 
 Gem5 can simulate 4 different types of CPUs. The common point of them is that they execute the instructions with respect to the order they arrive. This architecture is called in-order CPU.
 
 - **Minor CPU**
-  [gem5.org]
+  [Minor](http://doxygen.gem5.org/release/current/namespaceMinor.html) is an in-order processor model with a fixed pipeline but configurable data structures and execute behavior. It is intended to be used to model processors with strict in-order execution behavior and allows visualization of an instruction’s position in the pipeline through the MinorTrace/minorview.py format/tool. The intention is to provide a framework for micro-architecturally correlating the model with a particular, chosen processor with similar capabilities. The hierarchy of major unit ownership from [MinorCPU](http://doxygen.gem5.org/release/current/classMinorCPU.html) down looks like this:
+  
+  --- Pipeline - container for the pipeline, owns the cyclic 'tick' event mechanism and the idling (cycle skipping) mechanism.
+  
+  --- --- Fetch1 - instruction fetch unit responsible for fetching cache lines (or parts of lines from the I-cache interface).
+  
+  --- --- --- Fetch1::IcachePort - interface to the I-cache from Fetch1.
+  
+  --- --- Fetch2 - line to instruction decomposition.
+  
+  --- --- Decode - instruction to micro-op decomposition.
+  
+  --- --- Execute - instruction execution and data memory interface.
+  
+  --- --- --- LSQ - load store queue for memory ref. instructions.
+  
+  --- --- --- LSQ::DcachePort - interface to the D-ache from Execute.
+  
+  MinorCPU has a four-stage pipeline, which is consisted of: fetching lines, decomposition into macro-ops, decomposition of macro-ops into micro-ops and execute.
+  
 - **AtomicSimple CPU**
-  []
+  The AtomicSimpleCPU is the version of SimpleCPU that uses atomic memory accesses. It uses the latency estimates from the atomic accesses to estimate overall cache access time. The AtomicSimpleCPU is derived from BaseSimpleCPU, and implements functions to read and write memory, and also to tick, which defines what happens every CPU cycle. It defines the port that is used to hook up to memory, and connects the CPU to the cache.
+  
 - **TimingSimple CPU**
-  []
+  The TimingSimpleCPU is the version of SimpleCPU that uses timing memory accesses. It stalls on cache accesses and waits for the memory system to respond prior to proceeding. Like the AtomicSimpleCPU, the TimingSimpleCPU is also derived from BaseSimpleCPU, and implements the same set of functions. It defines the port that is used to hook up to memory, and connects the CPU to the cache. It also defines the necessary functions for handling the response from memory to the accesses sent out.
+  
+- **Base Simple CPU**
+  
+  The BaseSimpleCPU serves several purposes:
+  
+  - ​	Holds architected state, stats common across the SimpleCPU models.
+  - ​	Defines functions for checking for interrupts, setting up a fetch request, handling pre-execute setup, handling post-execute actions, and advancing the PC to the next instruction. These functions are also common across the SimpleCPU models.
+  - ​	Implements the ExecContext interface.
+  
+  The BaseSimpleCPU can not be run on its own but need one class that is inherited from the previous two models.
+  
 - **HPI CPU**
-  []
+  High Performance In-Order (HPI) CPU is based on the Arm architecture and is built to represent a modern in-order Armv8-A implementation. One of its basic characteristics is that it uses the same 4-stage pipeline that is used in the Minor CPU. Moreover, there are separate instruction and data buses, hence an instruction cache (ICache) and a data cache (DCache). So, there are distinct instruction and data L1 caches backed by a unified L2 cache.
 
 
 
@@ -106,6 +137,8 @@ The results of the simulation are saved as *stats.txt* files. The performance of
 ---
 
 ##### 3b. Results Interpretation
+
+As it was expected the execution with Minor kernel is much faster than the execution with TimingSimple kernel. The reason for this is the 4-stage pipeline of Minor kernel architecture. Using this architecture one instruction can be fetched by the CPU, while the previous is being processed by the ALU.
 
 
 
@@ -148,8 +181,8 @@ The results of the simulations, regarding the total clock ticks, are summarized 
 
 Useful statistic conclusions come of these results:
 
-- 
--  
--  
--  
-- 
+- MinorCPU is noticeably faster than TimingSimpleCPU for the same simulation.
+-  Upgrading from LPDDR2_S4_1066_1x32 to DDR3_1600_8x8 equals an important increment in speed of execution.
+-  Upgrading from DDR3_1600_8x8 to DDR4_2400_8x8 equals a weak increment in speed of execution.
+-  Upgrading from 2GHz to 3GHz equals an increment in speed of execution of about 5-7% for MinorCPU and about 11-13% for TimingSimpleCPU.
+- Upgrading from 3GHz to 4GHz equals an increment in speed of execution of about 4-5% for MinorCPU and about 5-8% for TimingSimpleCPU.
