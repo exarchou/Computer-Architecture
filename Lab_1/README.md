@@ -39,8 +39,6 @@ Except for the output file *stats.txt*, which is produced after the simulation, 
 - *[system.cpu_cluster.cpus], line 65* :  the variable type =MinorCPU indicates the architecture of the CPU. The reason this variable has not its default value (AtomicSimpleCPU) is the argument --cpu="minor".
 - *[system.mem_ctrls0.dram], line 1427* : the variable ranks_per_channel=2 indicates that there are 2 memory ranks in each channel. Consequently, the memory ranks for each channels are accessed through the names *system.mem_ctrls0* and *system.mem_ctrls1*, which can be found at line 13, under [system]. The same value of ranks_per_channel can be be obviously found at [system.mem_ctrls1.dram], line 1557.
 
-**[TYPE OF MEMORY]**
-
 
 
 ---
@@ -49,15 +47,31 @@ Except for the output file *stats.txt*, which is produced after the simulation, 
 
 The number of total committed instructions based on *stats.txt* is **5028**, as can be found at line 14 *system.cpu_cluster.cpus.committedInsts*.
 
-**[config.ini results]**
-
 
 
 ---
 
 ##### 2c. L2 cache
 
-The total number of accesses in L2 cache is **469**, as can be seen at line 523  under *system.cpu_cluster.l2.overall_accesses::total* 
+The total number of accesses in L2 cache is **479**, as can be seen at line 493  under system.cpu_cluster.l2.overall_accesses::total. This value could also be calculated as the sum of misses in icache and dcache in L1 cache minus MSHR total hits:
+
+
+
+system.cpu_cluster.cpus.dcache.overall_misses::total          **179**                       # number of overall misses                         # line 113
+
+system.cpu_cluster.cpus.dcache.overall_mshr_hits::total           **32**                       # number of overall MSHR hits               # line 139
+
+system.cpu_cluster.cpus.icache.overall_misses::total          **332**                       # number of overall misses                           # line 316
+
+system.cpu_cluster.cpus.icache.overall_mshr_misses::total          **332**                       # number of overall MSHR misses    #  line 344
+
+
+
+The number of accesses of L2 cache because of L1 dcache is 179 - 32 = 147 (dcache misses - MSHR hits).
+
+The number of accesses of L2 cache because of L1 icache is 332 - 0 = 332 (icache misses - MSHR hits).
+
+So, the total number of accesses of L2 cache is 147 + 332 = **479**.
 
 ---
 
