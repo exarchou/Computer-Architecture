@@ -63,7 +63,7 @@ The total number of accesses in L2 cache is **479**, as can be seen at line 493 
 
 113. system.cpu_cluster.cpus.dcache.overall_misses::total          **179**                       # number of overall misses
 
-316. system.cpu_cluster.cpus.icache.overall_misses::total          **332**                       # number of 
+316. system.cpu_cluster.cpus.icache.overall_misses::total          **332**                       # number of overall misses
 
 344. system.cpu_cluster.cpus.icache.overall_mshr_misses::total          **332**                       # number of overall MSHR misses
 
