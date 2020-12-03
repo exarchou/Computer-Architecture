@@ -74,33 +74,105 @@ The generated files *config.ini* contain information about all configurable para
 
 
 
-#### 1.2 Execution TIme, CPI & Miss Rates
+#### 1.2 Execution Time, CPI & Miss Rates
 
-|       | simulation seconds | cycles per instruction (CPI) | L2 cache miss rate | L1 i-cache miss rate | L1 d-cache miss rate |
-| :---: | :----------------: | :--------------------------: | :----------------: | :------------------: | :------------------: |
-| bzip  |      0.083654      |           1.673085           |      0.295247      |       0.000075       |       0.014312       |
-|  mcf  |      0.062553      |           1.251067           |      0.067668      |       0.019032       |       0.002062       |
-| hmmer |      0.070205      |           1.404100           |      0.031973      |       0.000170       |       0.006198       |
-| sjeng |      0.513823      |          10.276466           |      0.999978      |       0.000020       |       0.121831       |
-| libm  |      0.174763      |           3.495270           |      0.999940      |       0.000095       |       0.060972       |
+The following results about the simulation time, the CPI, L1 icache miss rate, L1 dcache miss rate and L2 cache miss rate were observed, running the benchmarks with the default parameters:
+
+- **L1 icache** *size=32kB* & *assoc=2*
+- **L1 dcache** *size=64kB* & *assoc=2*
+- **L2 cache** *size=2048kB* & *assoc=8*
+- *cache line size=64B*
+
+|           | simulation seconds | cycles per instruction (CPI) | L2 cache miss rate | L1 i-cache miss rate | L1 d-cache miss rate |
+| :-------: | :----------------: | :--------------------------: | :----------------: | :------------------: | :------------------: |
+| **bzip**  |      0.083654      |           1.673085           |      0.295247      |       0.000075       |       0.014312       |
+|  **mcf**  |      0.062553      |           1.251067           |      0.067668      |       0.019032       |       0.002062       |
+| **hmmer** |      0.070205      |           1.404100           |      0.031973      |       0.000170       |       0.006198       |
+| **sjeng** |      0.513823      |          10.276466           |      0.999978      |       0.000020       |       0.121831       |
+|  **lbm**  |      0.174763      |           3.495270           |      0.999940      |       0.000095       |       0.060972       |
+
+The results can be more easily interpreted, using plots:
+
+<p allign = "center">
+    <img src = "images/sim_sec.png"  width = 75%"
+</p>
+
+---
 
 
 
-[GRAPHS]
+
+
+<p allign = "center">
+    <img src = "images/cpi.png"  width = 75%"
+</p>
+
+---
+
+
+
+
+
+<p allign = "center">
+    <img src = "images/l2_miss_rate.png"  width = 75%"
+</p>
+
+---
+
+
+
+
+
+<p allign = "center">
+    <img src = "images/l1i_mr.png"  width = 75%"
+</p>
+
+---
+
+
+
+
+
+
+<p allign = "center">
+    <img src = "images/l1d_mr.png"  width = 75%"
+</p>
 
 
 
 Obviously, the **CPI** is affected both from L2 miss rate and L1 miss rate. As those miss rates are increased, CPI is also increased. This fact makes sense because every time the CPU makes a miss in L1 cache or L2 cache, there is a time penalty. Nevertheless, the time penalty of L2 cache is significantly bigger, as the L2 cache is a slower memory than L1 cache. 
 
+
+
 ---
 
-#### 1.3 CPU clock to 1GHz
+#### 1.3 Understanding System Clock and CPU Clock
+
+The configuration file *config.ini* includes useful information about different clocks of the generated system. The clock under the tag **[system.clk_domain]** and the clock under the tag **[system.cpu_clk_domain]**. This values refer to the total number of system ticks, in order to produce a signal (clock). Given that the system simulates 1,000,000,000,000 , the **system.clk_domain clock**, which is 1000 ticks, corresponds to a clock of 1 GHz. Similarly, the **system.cpu_clk_domain clock**, which is 500 ticks, corresponds to a clock of 2 GHz. These 2 different clocks define different subsystems of the simulated system, namely the **CPU** and the **Main Memory**. L2 cache takes over the role of a *communication bridge*, between these two systems and for this reason should be able to communicate in different clock rates, when *system.clk_domain* and *system.cpu_clk_domain* clock have not the same value. Changing the CPU clock's frequency to 1GHz comes with a change at *system.cpu_clk_domain* clock at 1GHz, which also affects the communication rate between CPU and L2 cache. The results of the benchmarks can be seen below:
+
+|           | simulation seconds | cycles per instruction (CPI) | L2 cache miss rate | L1 i-cache miss rate | L1 d-cache miss rate |
+| :-------: | :----------------: | :--------------------------: | :----------------: | :------------------: | :------------------: |
+| **bzip**  |      0.160359      |           1.603595           |      0.295235      |       0.000075       |       0.014123       |
+|  **mcf**  |      0.123265      |           1.232645           |      0.067668      |       0.019046       |       0.002062       |
+| **hmmer** |      0.140134      |           1.401339           |      0.031973      |       0.000170       |       0.006197       |
+| **sjeng** |      0.705640      |           7.056395           |      0.999978      |       0.000020       |       0.121831       |
+|  **lbm**  |      0.262262      |           2.622616           |      0.999940      |       0.000095       |       0.060972       |
 
 
 
-[]
+Comparing this table with the previous results with the CPU clock at 2GHz, we come up with some meaningful conclusions. First of all the Miss Rates of the different levels of caches are not affected of the change in the CPU clock. On the other hand, what is strongly connected with the CPU clock are the simulation seconds and the CPIs. The reason for this to happen is that L1 icache, as well ass L2 dcache are clocked in the CPU frequency and so the miss penalty time is higher. We can see the development of those measurements in the following table:
 
----
+|           | Simulation Seconds Increase | Cycles pre Instruction Decrease |
+| :-------: | :-------------------------: | :-----------------------------: |
+| **bzip**  |           91.71%            |              4.15%              |
+|  **mcf**  |           97.05%            |              1.47%              |
+| **hmmer** |           99.61%            |              0.01%              |
+| **sjeng** |           37.33%            |             31.33%              |
+|  **lbm**  |           38.62%            |             24.97%              |
+
+The first three benchmarks, namely *bzip*, *mcf* and *hmmer* had the most remarkable increment in the simulation time, as the total seconds were almost doubled. On the other hand, the last two benchmarks, namely *sjeng* and *lbm* show a larger decrease on the total CPI.
+
+In conclusion the most important parameter of the simulated system by the means of time performance is the L2 cache. Going back from 1GHz CPU clock to 2GHz we can observe that the benchmarks with high L2 Cache Miss Rates are not able to achieve such a simulation time compression, as the other ones. The reason behind this observation is the high time-penalty of the L2 cache when a "miss" occurs, due to the slower speed of this level of cache memory. 
 
 
 
@@ -203,6 +275,3 @@ Last but not least the contribution of the cache line size to the CPIs is studie
 ##### 2.1.6 Multiple parameters alteration
 
 In this final section the contribution of the combination of several parameters to the total CPIs is analyzed. For this reason the Associativity of L1 caches is changed to 1, while the Associativity of L2 cache takes the values 2, 4, 16 and the cache line size takes the values 16, 32, 128 respectively. 
-
-
-
