@@ -82,7 +82,127 @@ The generated files *config.ini* contain information about all configurable para
 |  mcf  |      0.062553      |           1.251067           |      0.067668      |       0.019032       |       0.002062       |
 | hmmer |      0.070205      |           1.404100           |      0.031973      |       0.000170       |       0.006198       |
 | sjeng |      0.513823      |          10.276466           |      0.999978      |       0.000020       |       0.121831       |
-| libm  |      0.000045      |           8.039123           |      0.930807      |       0.090809       |       0.062190       |
+| libm  |      0.174763      |           3.495270           |      0.999940      |       0.000095       |       0.060972       |
+
+
+
+[GRAPHS]
+
+
+
+Obviously, the **CPI** is affected both from L2 miss rate and L1 miss rate. As those miss rates are increased, CPI is also increased. This fact makes sense because every time the CPU makes a miss in L1 cache or L2 cache, there is a time penalty. Nevertheless, the time penalty of L2 cache is significantly bigger, as the L2 cache is a slower memory than L1 cache. 
+
+---
+
+#### 1.3 CPU clock to 1GHz
+
+
+
+[]
+
+---
+
+
+
+### 2. Design Exploration & Performance Optimization
+
+Now that we have already run some basic benchmarks it is the time to analyze the influence of specific parameters to the performance of the system, measured in CPIs. The configurable parameters are given to the system with the form of the following arguments:
+
+- *--l1i_size*
+- *--l1i_assoc*
+- *--l1d_size*
+- *--l1d_assoc*
+- *--l2_size*
+- *--l2_assoc*
+- *--cacheline_size*
+
+
+
+#### 2.1. Influence of Parameters in CPIs
+
+The default parameters of the system are:
+
+- **L1 icache** *size=32kB* & *assoc=2*
+- **L1 dcache** *size=64kB* & *assoc=2*
+- **L2 cache** *size=2048kB* & *assoc=8*
+- *cache line size=64B*
+
+These parameters will be modified in order to achieve high system performance by the meaning of low CPIs. In this experiment we will take into account that these parameters can only take distinct values, as well as that there exist some upper limitations:
+
+- Maximum combined L1 instruction-cache size and l1 data-cache size must not exceed 256kB.
+
+- Maximum L2 cache size must not exceed 4MB.
+- Cache size is discrete powers of 2 (16kB, 32kB,...) which means that L1 icache and L1 dcache are at 16kB,32kB,64kB,128kB and L2 Cache is respectively 512kB, 1024kB, 2048kB, 4096kB.
+
+- Commonly used n-set Associativities are 1,2,4,8,16
+
+- Commonly used cache line sizes are 16,32,64,128 Bytes.
+
+---
+
+##### 2.1.1 Size of L1 cache (icache & dcache)
+
+On this point, we will also make the assumption that the the sizes of L1 i-cache and L1 d-cache retain the analogy 1:2, in order to simplify our analysis. At first their capacity will be decreased by one half (icache : 16kB and dcache : 32kB) and then it will be doubled (icache: 64 kB and dcache 128 kB). The limitation of summed size less than 256 kB forbids additional experiments. The results are show below:
+
+
+
+[]
+
+
+
+---
+
+##### 2.1.2 Size of L2 cache
+
+The size of L2 cache is changed respectively to the values 512kB, 1024kB and 4096kB. The results are shown below:
+
+
+
+[]
+
+
+
+---
+
+##### 2.1.3 Associativity of L1 cache (icache & dcache)
+
+As we did with the size of L1 caches, also here we assume that the associativities of L1 icache and dcache are mightily connceted. The associativity of L1 caches is changed respectively to the values 1, 4 and 8. The results are shown below:
+
+
+
+[]
+
+
+
+---
+
+##### 2.1.4 Associativity of L2 cache
+
+The size of L2 cache is changed respectively to the values 2, 4 and 16. The results are shown below:
+
+ 
+
+
+
+[]
+
+
+
+---
+
+##### 2.1.5 Size of cache line
+
+Last but not least the contribution of the cache line size to the CPIs is studied. For this reason we change its values to 16B, 32B and 128 B respectively. The results are shown below:
+
+
+
+[]
+
+
+
+##### 2.1.6 Multiple parameters alteration
+
+In this final section the contribution of the combination of several parameters to the total CPIs is analyzed. For this reason the Associativity of L1 caches is changed to 1, while the Associativity of L2 cache takes the values 2, 4, 16 and the cache line size takes the values 16, 32, 128 respectively. 
 
 
 
