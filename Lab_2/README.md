@@ -1,3 +1,5 @@
+
+
 # Lab 2
 
 
@@ -190,7 +192,53 @@ Now that we have already run some basic benchmarks it is the time to analyze the
 
 
 
-#### 2.1. Influence of Parameters in CPIs
+#### 2.1. Understanding the measurements of each benchmark
+
+In order to understand which parameters to configure to achieve a lower CPI for each benchmark, it is useful to study the total Accesses and Miss Rates for the different levels of Caches.
+
+| Benchmarks |    CPI    | dcache Miss Rate | dcache Accesses | icache Miss Rate | icache Accesses | L2 Miss Rate | L2 Accesses |
+| :--------: | :-------: | :--------------: | :-------------: | :--------------: | :-------------: | ------------ | ----------- |
+|  specbzip  | 1,673085  |     0,014312     |   52.072.437    |     0,000075     |   10.278.676    | 0,295247     | 683,552     |
+|  specmcf   | 1,251067  |     0,002062     |   35.689.499    |     0,019032     |   28.116.952    | 0,067668     | 589,157     |
+| spechmmer  |  1,4041   |     0,006198     |   47.807.608    |     0,00017      |   15.475.019    | 0,031973     | 176,87      |
+| specsjeng  | 10,276466 |     0,121831     |   86.380.830    |     0,00002      |   32.145.417    | 0,999978     | 5.264.013   |
+|  speclibm  |  3,49527  |     0,060972     |   48.795.269    |     0,000095     |    6.046.498    | 0,99994      | 1.488.206   |
+
+
+
+##### 2.1.1 bzip
+
+The table above indicates that icache has a really low Miss Rate, while the dcache is bounded to a noticeably larger Miss Rate. This fact in combination with the higher Accesses of the dcache indicates that a significant amount of the CPU latency occurs because of this L1 dcache. The same measurements can be observed for the L2 cache. For this reason, it would be advisable to improve those two parameters, as well as the cache line size.
+
+---
+
+##### 2.1.2 mcf
+
+
+
+---
+
+##### 2.1.3 hmmer
+
+
+
+---
+
+##### 2.1.4 sjeng
+
+
+
+---
+
+##### 2.1.5 lbm
+
+
+
+---
+
+
+
+#### 2.2. Influence of Parameters in CPIs
 
 The default parameters of the system are:
 
@@ -199,7 +247,7 @@ The default parameters of the system are:
 - **L2 cache** *size=2048kB* & *assoc=8*
 - *cache line size=64B*
 
-These parameters will be modified in order to achieve high system performance by the meaning of low CPIs. In this experiment we will take into account that these parameters can only take distinct values, as well as that there exist some upper limitations:
+These parameters will be modified in order to achieve high system performance by the meaning of low CPI. In this experiment we will take into account that these parameters can only take distinct values, as well as that there exist some upper limitations:
 
 - Maximum combined L1 instruction-cache size and l1 data-cache size must not exceed 256kB.
 
@@ -210,27 +258,50 @@ These parameters will be modified in order to achieve high system performance by
 
 - Commonly used cache line sizes are 16,32,64,128 Bytes.
 
+The following paragraphs contain useful data presentation, by plotting the CPI for changes in the parameters described above. Our goal is the modification of those parameters in order to achieve lower CPI. 
+
+
+
+##### 2.2.1 Size of L1 cache (icache & dcache)
+
+**On this point, we will also make the assumption that the the sizes of L1 i-cache and L1 d-cache retain the analogy 1:2, in order to simplify our analysis.** 
+
+At first their capacity will be decreased by one half (icache : 16kB and dcache : 32kB) and then it will be doubled (icache: 64 kB and dcache 128 kB). The limitation of summed size less than 256 kB forbids additional experiments. The results are show below:
+
+|  Benchmarks  |   bzip   |   mcf    |  hmmer   |   sjeng   |   lbm    |
+| :----------: | :------: | :------: | :------: | :-------: | :------: |
+| l1size_1632  |  1,7072  | 1,331166 | 1,414997 | 10,271068 | 3,503012 |
+|   default    | 1,673085 | 1,251067 |  1,4041  | 10,276466 | 3,49527  |
+| l1size_64128 | 1,644713 | 1,146373 | 1,383996 | 10,276674 | 3,49527  |
+
+<p allign = "center">
+    <img src = "images/l1size.PNG">
+</p>
+
+As we can see the increase of the size of L1 caches causes less CPI for the first three benchmarks, while it does not affect the last two. The main reason for this is the high L2 miss rates.
+
+
+
 ---
 
-##### 2.1.1 Size of L1 cache (icache & dcache)
-
-On this point, we will also make the assumption that the the sizes of L1 i-cache and L1 d-cache retain the analogy 1:2, in order to simplify our analysis. At first their capacity will be decreased by one half (icache : 16kB and dcache : 32kB) and then it will be doubled (icache: 64 kB and dcache 128 kB). The limitation of summed size less than 256 kB forbids additional experiments. The results are show below:
-
-
-
-[]
-
-
-
----
-
-##### 2.1.2 Size of L2 cache
+##### 2.2.2 Size of L2 cache
 
 The size of L2 cache is changed respectively to the values 512kB, 1024kB and 4096kB. The results are shown below:
 
+| Benchmarks  |   bzip   |   mcf    | hmmer  |   sjeng   |   lbm    |
+| :---------: | :------: | :------: | :----: | :-------: | :------: |
+| l2size_512  | 1,755657 | 1,261263 | 1,4041 | 10,277807 | 3,498384 |
+| l2size_1024 | 1,703159 | 1,25562  | 1,4041 | 10,279562 | 3,50515  |
+|   default   | 1,673085 | 1,251067 | 1,4041 | 10,276466 | 3,49527  |
+| l2size_4096 | 1,646081 | 1,250532 | 1,4041 | 10,270133 | 3,498633 |
+
+<p allign = "center">
+    <img src = "images/l2size.PNG">
+</p>
 
 
-[]
+
+Even though we expected that the size of L2 cache will affect the CPI for the high L2 Miss Rate benchmarks, namely *sjeng* and *lbm*, the increase of its size does not impact the overall performance. On the other hand the *bzip* benchmark shows a decrease of the CPI.
 
 
 
@@ -240,9 +311,20 @@ The size of L2 cache is changed respectively to the values 512kB, 1024kB and 409
 
 As we did with the size of L1 caches, also here we assume that the associativities of L1 icache and dcache are mightily connceted. The associativity of L1 caches is changed respectively to the values 1, 4 and 8. The results are shown below:
 
+| Benchmarks |   bzip   |   mcf    |  hmmer   |   sjeng   |   lbm    |
+| :--------: | :------: | :------: | :------: | :-------: | :------: |
+|  l1assoc1  | 1,697535 | 1,341859 | 1,448249 | 10,274614 | 3,510727 |
+|  default   | 1,673085 | 1,251067 |  1,4041  | 10,276466 | 3,49527  |
+|  l1assoc4  | 1,664527 | 1,146373 | 1,401355 | 10,276418 | 3,49527  |
+|  l1assoc8  | 1,658526 | 1,146373 |  1,4019  | 10,276258 | 3,49527  |
+
+<p allign = "center">
+    <img src = "images/l1assoc.PNG">
+</p>
 
 
-[]
+
+As we can see the increase of the associativity of L1 caches does not impact ,in general, the total CPI. The only benchmark that shows a decrease in CPI is the *mcf*.
 
 
 
@@ -252,11 +334,20 @@ As we did with the size of L1 caches, also here we assume that the associativiti
 
 The size of L2 cache is changed respectively to the values 2, 4 and 16. The results are shown below:
 
- 
+| Benchmarks |   bzip   |   mcf    |  hmmer   |   sjeng   |   lbm    |
+| :--------: | :------: | :------: | :------: | :-------: | :------: |
+|  l2assoc2  | 1,697535 | 1,341859 | 1,448249 | 10,274614 | 3,510727 |
+|  l2assoc4  | 1,690782 | 1,341817 | 1,448249 | 10,277417 | 3,51034  |
+|  default   | 1,673085 | 1,251067 |  1,4041  | 10,276466 | 3,49527  |
+| l2assoc16  | 1,673782 | 1,251085 |  1,4041  | 10,277003 | 3,49527  |
+
+<p allign = "center">
+    <img src = "images/l2assoc.PNG">
+</p>
 
 
 
-[]
+Similarly with the L1 cache associativity, also the L2 cache associativity does not affect the performance of the system, except for the case of *mcf* benchmark.
 
 
 
@@ -266,12 +357,45 @@ The size of L2 cache is changed respectively to the values 2, 4 and 16. The resu
 
 Last but not least the contribution of the cache line size to the CPIs is studied. For this reason we change its values to 16B, 32B and 128 B respectively. The results are shown below:
 
+| Benchmarks |   bzip   |   mcf    |  hmmer   |   sjeng   |   lbm    |
+| :--------: | :------: | :------: | :------: | :-------: | :------: |
+|   line16   | 2,11314  | 1,692583 | 1,517801 | 33,485377 | 9,804702 |
+|   line32   | 1,86237  | 1,434275 | 1,462952 | 17,647723 | 5,610684 |
+|  default   | 1,673085 | 1,251067 |  1,4041  | 10,276466 | 3,49527  |
+|  line128   | 1,67948  | 1,322353 | 1,455582 | 6,806774  | 2,601588 |
+
+<p allign = "center">
+    <img src = "images/line_size.PNG">
+</p>
 
 
-[]
+
+In this graph we can finally observe some great impact of a system configurable parameter to the CPI. The decrease of CPI for the last two benchmarks, *sjeng* and *lbm* is enormous, while a decrease is also appeared in the *bzip* and *mcf*. The results make clearly sense as a greater cache line size exploits more **spatial locality**, by the means of effectively prefetching data that we have not explicitly asked for.
 
 
 
 ##### 2.1.6 Multiple parameters alteration
 
 In this final section the contribution of the combination of several parameters to the total CPIs is analyzed. For this reason the Associativity of L1 caches is changed to 1, while the Associativity of L2 cache takes the values 2, 4, 16 and the cache line size takes the values 16, 32, 128 respectively. 
+
+|     Benchmarks     |   bzip   |   mcf    |  hmmer   |   sjeng   |   lbm    |
+| :----------------: | :------: | :------: | :------: | :-------: | :------: |
+| l1assoc1_l2assoc2  | 1,697535 | 1,341859 | 1,448249 | 10,274614 | 3,510727 |
+| l1assoc1_l2assoc4  | 1,690782 | 1,341817 | 1,448249 | 10,277417 | 3,51034  |
+|      default       | 1,673085 | 1,251067 |  1,4041  | 10,276466 | 3,49527  |
+| l1assoc1_l2assoc16 | 1,692417 | 1,341895 | 1,448249 | 10,277195 | 3,510641 |
+
+|    Benchmarks    |   bzip   |   mcf    |  hmmer   |   sjeng   |   lbm    |
+| :--------------: | :------: | :------: | :------: | :-------: | :------: |
+| l1assoc1_line16  | 2,11314  | 1,692583 | 1,517801 | 33,485377 | 9,804702 |
+| l1assoc1_line32  | 1,86237  | 1,434275 | 1,462952 | 17,647723 | 5,610684 |
+|     default      | 1,673085 | 1,251067 |  1,4041  | 10,276466 | 3,49527  |
+| l1assoc1_line128 | 1,67948  | 1,322353 | 1,455582 | 6,806774  | 2,601588 |
+
+<p>
+    <img src = "images/l1assoc1_l2assoc.PNG" width = 49%> <img src = "images/l1assoc1_linesize.PNG" width = 49%>
+</p>
+
+
+
+Even in this case of multiple parameters changing to measure CPI, it is easily observable that the primary reason of CPI reduction is the increase of cache line size.
