@@ -1,5 +1,3 @@
-
-
 # Lab 2
 
 
@@ -363,6 +361,7 @@ Last but not least the contribution of the cache line size to the CPIs is studie
 |   line32   | 1,86237  | 1,434275 | 1,462952 | 17,647723 | 5,610684 |
 |  default   | 1,673085 | 1,251067 |  1,4041  | 10,276466 | 3,49527  |
 |  line128   | 1,67948  | 1,322353 | 1,455582 | 6,806774  | 2,601588 |
+|  line256   | 1,653557 | 1,297998 | 1,48923  | 5,175870  | 1,996237 |
 
 <p allign = "center">
     <img src = "images/line_size.PNG">
@@ -399,3 +398,129 @@ In this final section the contribution of the combination of several parameters 
 
 
 Even in this case of multiple parameters changing to measure CPI, it is easily observable that the primary reason of CPI reduction is the increase of cache line size.
+
+
+
+
+
+### 3. Cost of Performance and Optimization
+
+This final section investigates the influence of the parameters of Cache Memories to the cost of the system. Through this analysis it will be possible to choose the most "value for money" design to achieve low CPI and low cost. With the term cost we do not only name the manufacturing cost, but also the speed, the size and the complexity of the circuit.
+
+The manufacturers have always go for a compromise. The most important reason is the architectural limitations. A huge number of transistors is needed to build a cache. It is also one of the main energy absorbing elements. Therefore, selecting the capacitance must be balanced between the performance, power consumption and the surface of the core, and thus the cost of production. Moreover, the more cache means a larger area of memory you need to "search". Thus, the access time can be longer.
+
+On the other hand, Associativity plays also a dominant role in the cost function, affecting its complexity. Multiplexers are added to Caches, to achieve different kinds of Associativity. As L1 Caches are closer to the CPU, those Multiplexers pay a higher cost, regarding space.
+
+Finally, although the increase of **Cache Line** size takes advantage of **spatial locality**, and thus reducing Miss Rate of the caches, it makes the memory slower. The reason for this to happen is that a larger Memory Block needs more time to be fetched.
+
+As Associativity, also Cache Line size pays a higher cost for the L1 Cache, because this level cache frequently accessed and has to be faster. 
+
+For all the reasons described above, combined with valuable information we got during studying various publications, we came up with the following cost function:
+
+<p allign = 'center'>
+    <img src = 'images/cost.png' width = '110%'>
+</p>
+
+Obviously the variables went through normalization, dividing with the default values and the total function was multiplied by 100 for reasons of better results interpretation. The cost of each simulation can be seen in the following table:
+
+| Sim. | L1 dcache size | L1 dcache assoc. | L1 icache size | L1 icache assoc. | L2 cache size | L2 cache assoc. | Cache Line size | Cost |
+| :--: | :------------: | :--------------: | :------------: | :--------------: | :-----------: | :-------------: | :-------------: | :--: |
+|  1   |      64kB      |        2         |      32kB      |        2         |    2048kB     |        8        |       64        | 100  |
+|  2   |      32kB      |        2         |      16kB      |        2         |    2048kB     |        8        |       64        |  60  |
+|  3   |     128kB      |        2         |      64kB      |        2         |    2048kB     |        8        |       64        | 180  |
+|  4   |      64kB      |        2         |      32kB      |        2         |     512kB     |        8        |       64        |  85  |
+|  5   |      64kB      |        2         |      32kB      |        2         |    1024kB     |        8        |       64        |  90  |
+|  6   |      64kB      |        2         |      32kB      |        2         |    4096kB     |        8        |       64        | 120  |
+|  7   |      64kB      |        1         |      32kB      |        1         |    2048kB     |        8        |       64        |  80  |
+|  8   |      64kB      |        4         |      32kB      |        4         |    2048kB     |        8        |       64        | 140  |
+|  9   |      64kB      |        8         |      32kB      |        8         |    2048kB     |        8        |       64        | 220  |
+|  10  |      64kB      |        1         |      32kB      |        1         |    2048kB     |        2        |       64        | 92.5 |
+|  11  |      64kB      |        1         |      32kB      |        1         |    2048kB     |        4        |       64        |  95  |
+|  12  |      64kB      |        1         |      32kB      |        1         |    2048kB     |       16        |       64        | 110  |
+|  13  |      64kB      |        2         |      32kB      |        2         |    2048kB     |        8        |       16        | 62.5 |
+|  14  |      64kB      |        2         |      32kB      |        2         |    2048kB     |        8        |       32        |  75  |
+|  15  |      64kB      |        2         |      32kB      |        2         |    2048kB     |        8        |       128       | 150  |
+|  16  |      64kB      |        2         |      32kB      |        2         |    2048kB     |        8        |       256       | 250  |
+
+
+
+In the following analysis we will merge the results of chapter 2.1 about the CPI with the cost calculated above, for each of the 16 different cases, in order to calculate a *value for cost choice* to implement our system: 
+
+
+
+##### 3.1.1 bzip
+
+<p>
+    <img src = "images/cost_cpi_bzip.png" width = '75%'>
+</p>
+
+
+
+
+One can easily observe that CPI is a descending function of the Cost. That means that in order to decrease CPI the cost must be increased. This *tradeoff* between CPI and cost is completely reasonable and we have to  find the *optimal point* of the curve that satisfies the followings:
+
+- Cost as small as possible
+- CPI as small as possible
+
+The search of this optimal point is a common scientific problem, when *tradeoffs* are met and is usually solved following the **elbow rule**. Specifically, an imaginary line will be drown starting from the start of the axis and will be slided to the points of the curve, keeping its slope constant. The first point this line meets is picked as the *optimum point*. When we have not any *priori* information about the weights of the two values in the tradeoff, the slope of the line is *-45 degrees*. 
+
+In this case the optimum point corresponds to the one with (60, 1.70720). This point corresponds to the architecture with the decreased L1 icache and dcache size at 16 and 32 kB respectively. Explicitly, the parameters of the system will be set as:
+
+-  **L1 icache** *size=16kB* & *assoc=2*
+- **L1 dcache** *size=32kB* & *assoc=2*
+- **L2 cache** *size=2048kB* & *assoc=8*
+- *cache line size=64B*
+
+---
+
+##### 3.1.2 mcf
+
+<p>
+    <img src = "images/cost_cpi_mcf.png" width = '75%'>
+</p>
+
+
+
+
+---
+
+##### 3.1.3 hmmer
+
+<p>
+    <img src = "images/cost_cpi_hmmer.png" width = '80%'>
+</p>
+
+
+
+
+---
+
+##### 3.1.4 sjeng
+
+
+
+<p>
+    <img src = "images/cost_cpi_sjeng.png" width = '80%'>
+</p>
+
+
+---
+
+##### 3.1.5 lbm
+
+<p>
+    <img src = "images/cost_cpi_lbm.png" width = '80%'>
+</p>
+
+
+
+##### 3.2 Conclusion
+
+Obviously, the optimum point at every benchmark is selected as the one with *Cost = 60*, which corresponds to the system with 16kB and 32kB as sizes for the L1 icache and L1 dcache respectively. This observation shows that we have consider the weight of those parameters very high, while designing the cost function. Therefore the size of L1 caches is the dominant factor in the equation and clearly affects the *tradeoff*. 
+
+The examination of the weights of each parameters in the cost function is an issue to be resolved in the future, so that a more balanced cost function will be constructed.
+
+
+
+### 4. Project Review
+
