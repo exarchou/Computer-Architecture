@@ -364,7 +364,7 @@ Last but not least the contribution of the cache line size to the CPIs is studie
 |  line256   | 1,653557 | 1,297998 | 1,48923  | 5,175870  | 1,996237 |
 
 <p allign = "center">
-    <img src = "images/line_size2.PNG">
+    <img src = "images/line_size2.png">
 </p>
 
 
