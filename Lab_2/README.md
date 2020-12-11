@@ -211,25 +211,19 @@ The table above indicates that icache has a really low Miss Rate, while the dcac
 ---
 
 ##### 2.1.2 mcf
-
+In this case we see that we have a low miss rate in dcache and a relatively small number of accesses in L2 cache. With quick calculations it seems that 90% of these accesses have come from icache, so we understand that we should focus on improving its operation either by increasing its size or changing its associativity.
 
 
 ---
 
 ##### 2.1.3 hmmer
-
-
-
----
-
-##### 2.1.4 sjeng
-
+Regarding hmmer we notice that L2 cache has a low miss rate and very few accesses. This is due to the satisfactory operation of L1 cache which does not create many misses. Of the two parts of l1cache, dcache is the one that has more accesses and a higher miss rate so an improvement in its parameters we would expect to improve the speed of our processor.
 
 
 ---
 
-##### 2.1.5 lbm
-
+##### 2.1.4 sjeng & lbm
+These two specs seem to show similar results. It is clear that in both there is a serious problem in the miss rate of L2 cache, which is over 99% while a significant number of commands are rejected by dcache mainly in sjeng but also in libm. Therefore it will be very important to experiment with increasing the size, associativity and line size of L2 cache, but also to reduce the miss rate of dcache.
 
 
 ---
