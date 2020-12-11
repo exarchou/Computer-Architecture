@@ -517,4 +517,4 @@ The examination of the weights of each parameters in the cost function is an iss
 
 
 ### 4. Project Review
-
+This second laboratory assignment familiarized us even more with the Architecture of the CPU and the Caches. We managed to perceive complex concepts as the difference between system clock and CPU clock. Running a thorough analysis of the given benchmarks, we understood the useful system parameters to achieve a high system performance. Moreover, in step 3 we learned that the performance always comes with a tradeoff between itself and a Cost, which stands for speed, space and manufacturing price. By this meaning, the assignment made as form an overall picture of the decisions a real Computer System Architect has to make. Last but not least, a dominant factor that restricted our analysis space was the execution time. If we had more time, we would be able to run more simulations and extract a better conclusion about the valuable system parameters to achieve a higher performance.
