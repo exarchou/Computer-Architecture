@@ -12,7 +12,7 @@ $ git clone https://github.com/kingmouf/cmcpat.git my_mcpat
 
 ##### 1.1 Dynamic Power & Leakage
 
-Inside the folder *ProcessorDescriptionFiles* of the installation there are *xml* files with different processors specification. To run McPAT for Xeon processor, the following command must be used:
+Inside the folder *ProcessorDescriptionFiles* of the installation there are *xml* files with different processors specification. To run McPAT for **Xeon** processor, the following command must be used:
 
 ```
 $ ./mcpat -infile ProcessorDescriptionFiles/Xeon.xml -print_level 1
@@ -58,9 +58,9 @@ Moreover, the efficiency of a CPU can be increased via the compression of *Dynam
 
 
 
+##### 1.3 Intel Xeon VS ARM Cortex-A9 
 
-
-
+McPAT comes with some build-in *xml* files with specifications about common processors, under the directory *ProcessorDescriptionFiles*. In this section, *Intel Xeon* and *ARM Cortex-A9* will be examined in terms of **Energy Efficiency**. Specifically, let's suppose that *Xeon* is 40 times faster of *Cortex-19*, regarding execution time.
 
 
 
