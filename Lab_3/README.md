@@ -14,7 +14,7 @@ $ git clone https://github.com/kingmouf/cmcpat.git my_mcpat
 
 Inside the folder *ProcessorDescriptionFiles* of the installation there are *xml* files with different processors specification. To run McPAT for **Xeon** processor, the following command must be used:
 
-```
+```bash
 $ ./mcpat -infile ProcessorDescriptionFiles/Xeon.xml -print_level 1
 ```
 
@@ -32,7 +32,7 @@ Observing the results we can see informations about **Dynamic Power** and **Leak
 
 - **Leakage**: this term refers to the static power consumed due to leakage current through the transistors, which in reality function as “imperfect” switches. There are two distinct leakage mechanisms, and the magnitude of each leakage current is proportional to the width of the transistor and depends on the logical state of the device. The first type of leakage, **subthreshold leakage**, occurs when a transistor that is supposedly in the off state actually allows a small current to pass between its source and drain. The second type, **gate leakage**, is the current that leaks through the gate terminal.
 
-
+- **Dynamic Power**: is the total energy consumed for the execution of a program, divided by the simulation time
 
 Consequently, we can understand that **Dynamic Power** is consumed, due to the capacitive load of the switching transistors, while **Leakage** refers to the imperfections of the inactive transistors of the system. 
 
@@ -60,19 +60,67 @@ Moreover, the efficiency of a CPU can be increased via the compression of *Dynam
 
 ##### 1.3 Intel Xeon VS ARM Cortex-A9 
 
-McPAT comes with some build-in *xml* files with specifications about common processors, under the directory *ProcessorDescriptionFiles*. In this section, *Intel Xeon* and *ARM Cortex-A9* will be examined in terms of **Energy Efficiency**. Specifically, let's suppose that *Xeon* is 40 times faster of *Cortex-19*, regarding execution time.
+McPAT comes with some build-in *xml* files with specifications about common processors, under the directory *ProcessorDescriptionFiles*. In this section, *Intel Xeon* and *ARM Cortex-A9* will be examined in terms of **Energy Efficiency**. Specifically, let's suppose that *Xeon* is 40 times faster of *Cortex-19*, regarding execution time. 
+
+To simulate *Intel Xeon* we run the command:
+
+```bash
+$ ./mcpat -infile ProcessorDescriptionFiles/Xeon.xml -print_level 1 > Xeon.txt
+```
+
+and for the *ARM Cortex-A9*:
+
+```bash
+$ ./mcpat -infile ProcessorDescriptionFiles/ARM_A9_2GHz.xml -print_level 1 > ARM_A9.txt
+```
+
+The results are illustrated in the following table
 
 
 
+|                                            |  Intel Xeon  | ARM Cortex-A9 |
+| :----------------------------------------: | :----------: | :-----------: |
+|               **Technology**               |    65 nm     |     40 nm     |
+|         **Core Clock Rate (MHz)**          |     3400     |     2000      |
+|                  **Area**                  | 410.507 mm^2 | 5.39698 mm^2  |
+|               **Peak Power**               |  134.938 W   |   1.74189 W   |
+|             **Total Leakage**              |  36.8319 W   |  0.108687 W   |
+|              **Peak Dynamic**              |  98.1063 W   |   1.6332 W    |
+|          **Subthreshold Leakage**          |  35.1632 W   |  0.0523094 W  |
+| **Subthreshold Leakage with power gating** |  16.3977 W   |       -       |
+|              **Gate Leakage**              |  1.66871 W   |  0.0563774 W  |
+|            **Runtime Dynamic**             |  72.9199 W   |   2.96053 W   |
 
 
 
+The energy consumption over a simulation time is given by the formula above:
+
+
+$$
+Energy = (Runtime Dynamic + Total Leakage) * Simulation Time
+$$
+
+
+The constraint of speed means that if *Xeon* needs *t* seconds for the execution of a program, *Cortex-A9* needs *40t*. Therefore the results for each processors energy are:
 
 
 
+- *Xeon*: 
+  $$
+  Energy = [72.9199 W + 36.8319 W] * tsec = 109.7518 t Joules
+  $$
 
 
 
+- *Cortex-A9*:
+
+$$
+Energy = [2.96053 W + 0.108687 W] * 40tsec = 122.76868 t Joules
+$$
+
+
+
+Although Xeon seems to consume less energy than Cortex-A9, Xeon will not shut down when it executes the program, but it will wait for the Cortex-A9 in idle state. For this *39t* remaining time, current will leak, due to *Subthreshold Leakage* and *Gate Leakage*. Therefore, Xeon will consume extra *39t`*`36.8319  =  1436.4441t* Joule.  Obviously, *Xeon* cannot be more energy efficient than *ARM Cortex-A9*, for a battery-supplied system.
 
 
 
