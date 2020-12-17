@@ -24,7 +24,9 @@ Observing the results we can see informations about **Dynamic Power** and **Leak
 
 - **Peak Power**: is the upper limit of the total power that the CPU can dissipate. As we can see in the following equation, the power dissipation of CMOS circuits consists of three main components:
 
-  [![img](https://github.com/exarchou/Computer-Architecture/raw/main/Lab_3/images/power.png)](https://github.com/exarchou/Computer-Architecture/blob/main/Lab_3/images/power.png)
+  <p>
+      <img src = "images/power.png" width = "44%">
+  </p>
 
 - **Dynamic Power**: is the power spent in charging and discharging the capacitive loads when the circuit switches state, where *C* is the total load capacitance, *Vdd* is the supply voltage, *∆V* is the voltage swing during switching, *fclk* is the clock frequency, and *α* indicates the fraction of total circuit capacitance being charged during a clock cycle.
 
@@ -120,25 +122,127 @@ $$
 
 
 
-Although Xeon seems to consume less energy than Cortex-A9, Xeon will not shut down when it executes the program, but it will wait for the Cortex-A9 in idle state. For this *39t* remaining time, current will leak, due to *Subthreshold Leakage* and *Gate Leakage*. Therefore, Xeon will consume extra *39t`*`36.8319  =  1436.4441t* Joule.  Obviously, *Xeon* cannot be more energy efficient than *ARM Cortex-A9*, for a battery-supplied system.
+Although Xeon seems to consume less energy than Cortex-A9, Xeon will not shut down when it executes the program, but it will wait for the Cortex-A9 in idle state. For this *39t* remaining time, current will leak, due to *Subthreshold Leakage* and *Gate Leakage*. Therefore, Xeon will consume extra *39t`*`36.8319  =  1436.4441t * Joule.  Obviously, *Xeon* cannot be more energy efficient than *ARM Cortex-A9*, for a battery-supplied system.
 
 
 
 
 
+### 2. Using gem5 & McPAT to optimize EDP
+
+In this section we will use bot gem5 and McPAT to optimize the Energy-Delay Product (EDP). Specifically, we will use a python file *GEM5ToMcPAT.py*, which takes as inputs the *stats.txt* and *config.json* files for each simulation in the previous laboratory exercise, as well as an *inorder_arm.xml* file from the build-in *Processor Description Files* of McPAT and produces an output *.xml* with the name *my_output.xml* for each simulation.
+
+This *my_output.xml* file contains information about the architecture of the simulated processor and is in a form, suitable for McPAT. The next step is to run McPAT with this file as input and produce a *results.txt* file for each simulation which contains the output about *Power* and *Leakages* that McPAT can calculate.
+
+Finally, we call *print_energy.py* script for each simulation, in order to calculate the energy produced by each simulated processor, by multiplying *power* and *simulated seconds*.
+
+We have to mention that each of the scripts described above is called inside a corresponding bash file, in order to be executed for each simulation.
+
+
+
+#### 2.1 Energy Consumed
+
+The energy consumed (in miliJoules) for each benchmark's simulation is illustrated in the following table:
+
+|                | bzip       | hmmer      | lbm        | mcf        | sjeng       |
+| -------------- | ---------- | ---------- | ---------- | ---------- | ----------- |
+| default        | 123.943021 | 106.538615 | 232.742198 | 93.410958  | 659.168626  |
+| l1 assoc 1     | 124.971035 | 109.20671  | 233.146318 | 99.427905  | 657.712528  |
+| l1 assoc 4     | 106.928349 | 92.998103  | 198.725279 | 75.459546  | 563.027582  |
+| l1 assoc 8     | 118.647121 | 105.625314 | 217.946413 | 85.437007  | 627.626176  |
+| l1 size_1632   | 73.682325  | 62.016195  | 143.627813 | 59.393098  | 413.516162  |
+| l1 size_64128  | 186.358536 | 159.907914 | 361.101253 | 131.292494 | 1029.859502 |
+| l2 assoc 2     | 124.26746  | 106.531103 | 232.707071 | 93.404624  | 659.145349  |
+| l2 assoc 4     | 123.889145 | 106.532928 | 232.714061 | 93.401966  | 659.0669    |
+| l2 assoc 16    | 124.009691 | 106.557781 | 232.799695 | 93.43128   | 659.377459  |
+| l2 size_512    | 127.961542 | 106.134445 | 254.979951 | 93.291871  | 654.961541  |
+| l2 size_1024   | 125.217515 | 106.298795 | 232.534142 | 93.24774   | 656.784217  |
+| l2 size_4096   | 123.157072 | 106.98891  | 234.275757 | 94.029666  | 663.003266  |
+| cache line 16  | 78.83968   | 58.463166  | 347.911539 | 55.544176  | 1177.384897 |
+| cache line 32  | 93.068378  | 74.916062  | 258.754606 | 65.094718  | 798.776352  |
+| cache line 128 | 152.304291 | 128.445683 | 210.371373 | 115.668455 | 531.434776  |
+| cache line 256 | 304.841227 |            | 334.941424 | 238.487381 | 837.124316  |
 
 
 
 
 
+#### 2.2 Peak Power in respect to Processor's Parameters
+
+Our goal in this point is to examine the influence of Processor's Parameters, such as L1 cache size, L1 cache associativity, L2 cache size etc. in the Peak Power generated from McPAT. Obviously, the kind of the benchmark (i.e. bzip, mcf, hmmer, sjeng and lbm) do not affect the Peak Power, because the latter is a measurement, which only depends on the physical hardware available. For this reason, our analysis will focus in a random benchmark, namely bzip.
 
 
 
+##### 2.2.1 Size of L1 cache (icache & dcache) 
+
+The Peak Power in Watts in respect to L1 cache size can be seen in the graph below:
 
 
 
+<p>
+    <img src='images/l1size.png' width = '55%'>
+</p>
 
 
 
+---
+
+##### 2.2.2 Size of L2 cache 
+
+The Peak Power in Watts in respect to L2 cache size can be seen in the graph below:
 
 
+
+<p>
+    <img src='images/l2size.png' width = '55%'>
+</p>
+
+
+
+---
+
+##### 2.2.3 Associativity of L1 cache (icache & dcache)
+
+The Peak Power in Watts in respect to L1 cache associativity can be seen in the graph below:
+
+
+
+<p>
+    <img src = 'images/l1assoc.png' width = '55%'>
+</p>
+
+
+
+---
+
+##### 2.2.4 Associativity of L2 cache 
+
+The Peak Power in Watts in respect to L2 cache associativity can be seen in the graph below:
+
+
+
+<p>
+    <img src = 'images/l2assoc.png' width = '55%'>
+</p>
+
+
+
+---
+
+##### 2.2.5 Size of Cache Line
+
+The Peak Power in Watts in respect to cache line size can be seen in the graph below:
+
+
+
+<p>
+    <img src = 'images/cacheline.png' width = '55%'>
+</p>
+
+
+
+---
+
+##### 2.2.6 Conclusion
+
+Obviously, the parameter with the greater impact on the Peak Power is the size of the cache line. The second place of the hierarchy is occupied by the L1 cache. Specifically, the major factor is the size of the L1 caches, while associativity has a minor influence in the peak power. Last but not least, the L2 Cache, so in terms of size, as of associativity slightly affects peak power.
