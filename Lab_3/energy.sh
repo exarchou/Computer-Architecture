@@ -1,1 +1,0 @@
-python2 print_energy.py /home/dimitris/spec_results/bzip_res/default/results.txt /home/dimitris/spec_results/bzip_res/default/stats.txt > /home/dimitris/spec_results/bzip_res/default/energy.txt

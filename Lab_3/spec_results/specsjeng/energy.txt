@@ -1,0 +1,4 @@
+Reading simulation time from: spec_results/specsjeng/results.txt
+Reading simulation time from: spec_results/specsjeng/stats.txt
+leakage: 1.153270 W, dynamic: 0.129601 W and runtime: 0.513823 sec
+energy is 659.168626 mJ

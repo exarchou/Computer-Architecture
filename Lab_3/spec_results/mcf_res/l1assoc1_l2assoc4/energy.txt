@@ -1,0 +1,4 @@
+Reading simulation time from: spec_results/mcf_res/l1assoc1_l2assoc4/results.txt
+Reading simulation time from: spec_results/mcf_res/l1assoc1_l2assoc4/stats.txt
+leakage: 1.150650 W, dynamic: 0.331236 W and runtime: 0.067091 sec
+energy is 99.421214 mJ

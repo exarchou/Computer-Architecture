@@ -1,0 +1,4 @@
+Reading simulation time from: spec_results/hmmer_res/l1assoc1_line32/results.txt
+Reading simulation time from: spec_results/hmmer_res/l1assoc1_line32/stats.txt
+leakage: 0.843586 W, dynamic: 0.199294 W and runtime: 0.073148 sec
+energy is 76.284586 mJ
