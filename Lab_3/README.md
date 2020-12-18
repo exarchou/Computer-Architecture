@@ -108,16 +108,17 @@ The constraint of speed means that if *Xeon* needs *t* seconds for the execution
 
 
 - *Xeon*: 
-  
+  $$
   Energy = [72.9199 W + 36.8319 W] * tsec = 109.7518 t Joules
-  
+  $$
 
 
 
 - *Cortex-A9*:
 
-  Energy = [2.96053 W + 0.108687 W] * 40tsec = 122.76868 t Joules
-
+$$
+Energy = [2.96053 W + 0.108687 W] * 40tsec = 122.76868 t Joules
+$$
 
 
 
@@ -270,6 +271,80 @@ In the second laboratory exercise we were asked to find the optimal parameters o
 | **cache line 32**  | 8.5939 | 5.3558 | 72.536 | 4.0548 | 705.1  |  75  |
 | **cache line 128** | 12.614 | 8.9352 | 27.154 | 7.2231 | 180.84 | 150  |
 | **cache line 256** | 25.204 | 12.617 | 33.431 | 15.478 | 216.64 | 250  |
+
+
+
+The results are also visualized in the following graphs:
+
+##### 2.2.1 Size of L1 cache (icache & dcache) 
+
+The EDP in respect to L1 cache size can be seen in the graph below:
+
+
+
+<p>
+    <img src='images/EDP/l1_size_1.png' width = '48%'> <img src='images/EDP/l1_size_2.png' width = '48%'>
+</p>
+
+
+
+
+---
+
+##### 2.2.2 Size of L2 cache 
+
+The EDP in respect to L2 cache size can be seen in the graph below:
+
+
+
+<p>
+    <img src='images/EDP/l2_size_1.png' width = '48%'> <img src='images/EDP/l2_size_2.png' width = '48%'>
+</p>
+
+
+
+
+---
+
+##### 2.2.3 Associativity of L1 cache (icache & dcache)
+
+The EDP in respect to L1 cache associativity can be seen in the graph below:
+
+
+
+<p>
+    <img src='images/EDP/l1_assoc_1.png' width = '48%'> <img src='images/EDP/l1_assoc_2.png' width = '48%'>
+</p>
+
+
+
+
+---
+
+##### 2.2.4 Associativity of L2 cache 
+
+The Peak Power in Watts in respect to L2 cache associativity can be seen in the graph below:
+
+
+
+<p>
+    <img src='images/EDP/l2_assoc_1.png' width = '48%'> <img src='images/EDP/l2_assoc_2.png' width = '48%'>
+</p>
+
+
+
+
+---
+
+##### 2.2.5 Size of Cache Line
+
+The EDP in respect to cache line size can be seen in the graph below:
+
+<p>
+    <img src='images/EDP/cache_line_1.png' width = '48%'> <img src='images/EDP/cache_line_2.png' width = '48%'>
+</p>
+
+---
 
 
 
