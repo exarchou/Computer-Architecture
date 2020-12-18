@@ -165,8 +165,6 @@ The energy consumed (in miliJoules) for each benchmark's simulation is illustrat
 
 
 
-
-
 #### 2.2 Peak Power in respect to Processor's Parameters
 
 Our goal in this point is to examine the influence of Processor's Parameters, such as L1 cache size, L1 cache associativity, L2 cache size etc. in the Peak Power generated from McPAT. Obviously, the kind of the benchmark (i.e. bzip, mcf, hmmer, sjeng and lbm) do not affect the Peak Power, because the latter is a measurement, which only depends on the physical hardware available. For this reason, our analysis will focus in a random benchmark, namely bzip.
@@ -246,3 +244,43 @@ The Peak Power in Watts in respect to cache line size can be seen in the graph b
 ##### 2.2.6 Conclusion
 
 Obviously, the parameter with the greater impact on the Peak Power is the size of the cache line. The second place of the hierarchy is occupied by the L1 cache. Specifically, the major factor is the size of the L1 caches, while associativity has a minor influence in the peak power. Last but not least, the L2 Cache, so in terms of size, as of associativity slightly affects peak power.
+
+
+
+#### 2.3  EDP ~ Cost Optimization
+
+In the second laboratory exercise we were asked to find the optimal parameters of the simulated system, in order to optimize the CPI and Cost relationship. In this assignment, we will optimize the designed system, with respect to the **Energy-Delay Product (EDP)**, where **Energy** represents the total energy to run the benchmark and **Delay** stands for the *simulation seconds*, as referred to *stats.txt* file. The following table contains the information about the EDP and the Cost for each simulation:
+
+
+
+|                    |  bzip  | hmmer  |  lbm   |  mcf   | sjeng  | Cost |
+| :----------------: | :----: | :----: | :----: | :----: | :----: | :--: |
+|    **default**     | 10.368 | 7.4795 | 40.675 | 5.8431 | 338.7  | 100  |
+|   **l1 assoc 1**   | 10.573 | 7.9079 | 40.924 | 6.6704 | 337.97 |  60  |
+|   **l1 assoc 4**   | 8.8992 | 6.5162 | 34.73  | 4.3253 | 289.3  | 180  |
+|   **l1 assoc 8**   | 9.8389 | 7.4038 | 38.089 | 4.8972 | 322.48 |  85  |
+|  **l1 size_1632**  | 6.2895 | 4.3876 | 25.157 | 3.9531 | 212.36 |  90  |
+| **l1 size_64128**  | 15.325 | 11.066 | 63.107 | 7.5256 | 529.18 | 120  |
+|   **l2 assoc 2**   | 10.432 | 7.479  | 40.669 | 5.8429 | 338.74 |  80  |
+|   **l2 assoc 4**   | 10.359 | 7.4791 | 40.67  | 5.8424 | 338.64 | 140  |
+|  **l2 assoc 16**   | 10.378 | 7.4809 | 40.685 | 5.8445 | 338.82 | 220  |
+|  **l2 size_512**   | 11.233 | 7.4512 | 44.601 | 5.8833 | 336.58 | 92.5 |
+|  **l2 size_1024**  | 10.663 | 7.4627 | 40.753 | 5.8542 | 337.57 |  95  |
+|  **l2 size_4096**  | 10.136 | 7.5112 | 40.982 | 5.8794 | 340.46 | 110  |
+| **cache line 16**  | 8.2797 | 4.3625 | 170.56 | 3.9449 | 1971.5 | 62.5 |
+| **cache line 32**  | 8.5939 | 5.3558 | 72.536 | 4.0548 | 705.1  |  75  |
+| **cache line 128** | 12.614 | 8.9352 | 27.154 | 7.2231 | 180.84 | 150  |
+| **cache line 256** | 25.204 | 12.617 | 33.431 | 15.478 | 216.64 | 250  |
+
+
+
+Looking the table above, we could conclude that the optimal scenario for a small EDP and Cost respectively is the one with L1 cache size 16/32 kB.
+
+
+
+
+
+### 4 Review
+
+This laboratory exercise offered us really interesting knowledge about the Energy consumed by the hardware inside the processor. We found out that the occupied are by the core is almost the same as by the L2 cache. Moreover we acquired information about the different types of energy consumed of each CPU part, as well as about the Leakage. Finally, we understood the differences between ARM and Intel architectures. We learned that, also in this case there is a *trade-off* , which the architect has to optimize, when designing a processor.
+
