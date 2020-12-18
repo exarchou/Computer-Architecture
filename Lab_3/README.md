@@ -116,7 +116,7 @@ The constraint of speed means that if *Xeon* needs *t* seconds for the execution
 
 - *Cortex-A9*:
 
-Energy = [2.96053 W + 0.108687 W] * 40tsec = 122.76868 t Joules
+  Energy = [2.96053 W + 0.108687 W] * 40tsec = 122.76868 t Joules
 
 
 
